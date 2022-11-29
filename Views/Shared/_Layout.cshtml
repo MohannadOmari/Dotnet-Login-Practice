@@ -4,6 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - UmniahAssignment</title>
+    <link rel="icon" type="image/x-icon" href="~/favicon.ico">
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/UmniahAssignment.styles.css" asp-append-version="true" />
@@ -23,6 +24,19 @@
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
                         </li>
                     </ul>
+                    <div class="collapse navbar-collapse" id="navbarResponsive">
+                        <ul class="navbar-nav ms-auto">
+                            @if (ViewBag.userId == null)
+                            {
+                                <li class="nav-item"><a class="nav-link" asp-controller="Home" asp-action="Login">Log In</a></li>
+                                <li class="nav-item"><a class="nav-link" asp-controller="Home" asp-action="Register">Register</a></li>
+                            }
+                            else
+                            {
+                                <li class="nav-item"><a class="nav-link" asp-controller="Home" asp-action="Logout">Log Out</a></li>
+                            }
+                        </ul>
+                    </div>
                 </div>
             </div>
         </nav>

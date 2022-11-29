@@ -18,6 +18,26 @@ namespace UmniahAssignment.Controllers
             return View();
         }
 
+        #region Login
+        public IActionResult Login()
+        {
+            return View();
+        }
+        #endregion
+
+        #region Register
+        public IActionResult Register()
+        {
+            return View();
+        }
+        #endregion
+
+        public IActionResult Logout()
+        {
+            HttpContext.Session.Clear();
+            return RedirectToAction("Index");
+        }
+
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
