@@ -89,13 +89,21 @@ namespace UmniahAssignment.Controllers
 
         #region List Users
         [HttpGet("/Users")]
-        public async Task<IActionResult> ListUsers()
+        public async Task<IActionResult> ListUsers(string searchString)
         {
             try
             {
                 ViewBag.UserId = HttpContext.Session.GetInt32("Id");
-                var users = await _userRepo.AllUsers();
-                return View(users);
+                if (!String.IsNullOrEmpty(searchString))
+                {
+                    var users = await _userRepo.AllUsers(null);
+                    return View(users);
+                }
+                else
+                {
+                    var users = await _userRepo.AllUsers(searchString);
+                    return View(users);
+                }
             }
             catch (Exception ex)
             {
@@ -133,10 +141,6 @@ namespace UmniahAssignment.Controllers
         [SecurityCheck]
         public async Task<IActionResult> Edit(Users user)
         {
-            //if (!ModelState.IsValid)
-            //{
-            //    return View(user);
-            //}
             int? id = HttpContext.Session.GetInt32("Id");
             await _userRepo.UpdateUser(user, id);
             TempData["success"] = "Profile updated successfully";
@@ -144,7 +148,7 @@ namespace UmniahAssignment.Controllers
         }
         #endregion
 
-        [SecurityCheck]
+        [LogoutCheck]
         public IActionResult Logout()
         {
             HttpContext.Session.Clear();
@@ -161,6 +165,7 @@ namespace UmniahAssignment.Controllers
         /*
         Security check for authorization
         if user not logged in route them to logging in page
+        if user attempts to access another user's details route them to home page
         */
         [AttributeUsageAttribute(AttributeTargets.Class | AttributeTargets.Method, Inherited = true, AllowMultiple = false)]
 
@@ -196,6 +201,33 @@ namespace UmniahAssignment.Controllers
                     base.OnActionExecuting(context);
                 }
 
+                base.OnActionExecuting(context);
+            }
+        }
+        #endregion
+
+        #region Logout check
+        [AttributeUsageAttribute(AttributeTargets.Class | AttributeTargets.Method, Inherited = true, AllowMultiple = false)]
+
+        public class LogoutCheckAttribute : ActionFilterAttribute, IActionFilter
+        {
+            public override void OnActionExecuting(ActionExecutingContext context)
+            {
+                var controller = context.Controller as HomeController;
+                var httpContext = controller.HttpContext;
+
+                if (httpContext.Session.GetInt32("Id") == null)
+                {
+
+                    controller.TempData["error"] = "Unauthorized Access please login";
+                    context.Result = new RedirectToRouteResult(
+                            new RouteValueDictionary
+                            {
+                            { "Controller", "Home" },
+                            { "Action", "Login" },
+                            });
+                    base.OnActionExecuting(context);
+                }
                 base.OnActionExecuting(context);
             }
         }

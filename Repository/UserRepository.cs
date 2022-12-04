@@ -41,9 +41,17 @@ namespace UmniahAssignment.Repository
             }
         }
 
-        public async Task<IEnumerable<Users>> AllUsers()
+        public async Task<IEnumerable<Users>> AllUsers(string? searchString)
         {
-            var query = "SELECT * FROM Users";
+            string query;
+            if (searchString == null)
+            {
+                query = "SELECT * FROM Users";
+            }
+            else
+            {
+                query = $"SELECT * FROM Users WHERE FullName = {searchString}";
+            }
             using(var connection = _context.CreateConnection())
             {
                 var users = await connection.QueryAsync<Users>(query);

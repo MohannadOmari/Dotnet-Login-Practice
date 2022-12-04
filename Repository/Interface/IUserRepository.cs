@@ -6,7 +6,7 @@ namespace UmniahAssignment.Repository.Interface
     {
         public Task<Users?> GetUser(Users user);
         public Task AddUser(Users user);
-        public Task<IEnumerable<Users>> AllUsers();
+        public Task<IEnumerable<Users>> AllUsers(string? searchString);
         public Task UpdateUser(Users user, int? id);
         public Task<Users> GetUserById(int id);
     }
